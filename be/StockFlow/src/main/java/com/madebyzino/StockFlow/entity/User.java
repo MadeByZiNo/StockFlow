@@ -1,5 +1,6 @@
 package com.madebyzino.StockFlow.entity;
 
+import com.madebyzino.StockFlow.dto.RegisterRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,14 @@ public class User extends BaseEntity {
     private String password;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private UserRole role;
 
+    public static User from(RegisterRequest request, String encodedPassword) {
+        return User.builder()
+                .username(request.getUsername())
+                .password(encodedPassword)
+                .role(UserRole.USER)
+                .build();
+    }
 }
