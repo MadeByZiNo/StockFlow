@@ -1,4 +1,8 @@
 package com.madebyzino.StockFlow.entity;
 
-public class OrderStatus {
+public enum OrderStatus {
+    REQUESTED,
+    APPROVED,
+    REJECTED,
+    CANCELLED
 }
