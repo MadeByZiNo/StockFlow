@@ -1,6 +1,6 @@
-**간단한 ERP 재고관리 시스템 구현**
+**간단한 ERP 재고관리 시스템 구현** (MyBatis 공부)
 
-2925-12-03~
+2025-12-03~
 
 
 Java/Spring/MyBatis/React/TypeScript
