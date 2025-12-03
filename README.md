@@ -7,8 +7,8 @@
 | 기능 | HTTP 메서드 | 엔드포인트 | 요청 파라미터 (Body) | 반환 파라미터 (Body) | 설명 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **등록** | `POST` | `/api/categories` | `name: string`, `description: string` | `id: Long`, `name: string` | 새 카테고리를 등록합니다. |
-| **수정** | `PUT` | `/api/v1/categories/{id}` | `name: string`, `description: string` | `Category` 엔티티 상세 정보 | 특정 카테고리를 수정합니다. |
-| **목록 조회** | `GET` | `/api/v1/categories` | (Query Params: `page`, `size`) | `List<Category>` 및 페이지 정보 | 카테고리 전체 목록을 조회합니다. |
+| **수정** | `PUT` | `/api/categories/{id}` | `name: string`, `description: string` | `Category` 엔티티 상세 정보 | 특정 카테고리를 수정합니다. |
+| **목록 조회** | `GET` | `/api/categories` | (Query Params: `page`, `size`) | `List<Category>` 및 페이지 정보 | 카테고리 전체 목록을 조회합니다. |
 
 ---
 
