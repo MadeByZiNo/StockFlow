@@ -1,17 +1,16 @@
 package com.madebyzino.StockFlow.service;
 
-import com.madebyzino.StockFlow.dto.AuthRequest;
-import com.madebyzino.StockFlow.dto.AuthResponse;
-import com.madebyzino.StockFlow.dto.RegisterRequest;
-import com.madebyzino.StockFlow.dto.UserDto;
-import com.madebyzino.StockFlow.entity.User;
+import com.madebyzino.StockFlow.dto.auth.AuthRequest;
+import com.madebyzino.StockFlow.dto.auth.AuthResponse;
+import com.madebyzino.StockFlow.dto.auth.RegisterRequest;
+import com.madebyzino.StockFlow.dto.auth.UserDto;
+import com.madebyzino.StockFlow.entity.user.User;
 import com.madebyzino.StockFlow.exception.TokenRefreshException;
 import com.madebyzino.StockFlow.exception.UserException;
 import com.madebyzino.StockFlow.repository.UserRepository;
 import com.madebyzino.StockFlow.security.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;

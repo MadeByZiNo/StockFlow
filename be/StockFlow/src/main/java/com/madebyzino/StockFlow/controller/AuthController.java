@@ -1,6 +1,8 @@
 package com.madebyzino.StockFlow.controller;
 
-import com.madebyzino.StockFlow.dto.*;
+import com.madebyzino.StockFlow.dto.auth.AuthRequest;
+import com.madebyzino.StockFlow.dto.auth.AuthResponse;
+import com.madebyzino.StockFlow.dto.auth.RegisterRequest;
 import com.madebyzino.StockFlow.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;

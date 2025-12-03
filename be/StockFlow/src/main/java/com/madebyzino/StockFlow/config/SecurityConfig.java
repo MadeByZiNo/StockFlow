@@ -40,6 +40,7 @@ public class SecurityConfig {
                                         "/api/auth/**",
                                         "/error"
                                 ).permitAll()
+                                .requestMatchers("/**").permitAll()
                                .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->

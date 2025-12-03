@@ -1,6 +1,6 @@
 package com.madebyzino.StockFlow.security;
 
-import com.madebyzino.StockFlow.entity.User;
+import com.madebyzino.StockFlow.entity.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
