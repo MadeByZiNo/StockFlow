@@ -24,6 +24,7 @@ public class Inventory extends BaseEntity {
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 
+    @Setter
     @Column(nullable = false)
     private int quantity;
 

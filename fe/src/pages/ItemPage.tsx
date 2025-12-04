@@ -28,19 +28,14 @@ const ItemPage = (): React.ReactElement => {
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
 
-    // 검색 조건 입력 상태 (ItemSearchCondition 필드 전체 반영)
     const [searchName, setSearchName] = useState('');
     const [searchMinPrice, setSearchMinPrice] = useState<number | ''>('');
     const [searchMaxPrice, setSearchMaxPrice] = useState<number | ''>('');
     const [searchSku, setSearchSku] = useState('');
     const [searchCategoryId, setSearchCategoryId] = useState<number | ''>(''); // 드롭다운
-    const [searchCenterName, setSearchCenterName] = useState('');
-    const [searchZoneCode, setSearchZoneCode] = useState('');
-    const [searchBinCode, setSearchBinCode] = useState('');
     const [searchMinQuantity, setSearchMinQuantity] = useState<number | ''>('');
 
 
-    // 1. 주 목록 데이터 불러오기 함수
     const fetchItems = useCallback(async (
         currentCriteria: ItemSearchCondition, 
         currentPage: number
@@ -68,7 +63,6 @@ const ItemPage = (): React.ReactElement => {
     // 2. 카테고리 목록 로드 (필터 드롭다운용)
     const fetchCategoryOptions = useCallback(async () => {
         try {
-            // NOTE: categoryService.fetchAllCategories()가 PageResponse를 반환한다고 가정했으므로 .content 사용
             const loadedCategories = (await categoryService.fetchAllCategories()).content; 
             setCategories(loadedCategories);
         } catch (err) {
@@ -76,14 +70,12 @@ const ItemPage = (): React.ReactElement => {
         }
     }, []);
 
-    // 초기 로딩
     useEffect(() => {
         fetchItems(criteria, page);
         fetchCategoryOptions(); 
     }, [fetchItems, fetchCategoryOptions, criteria, page]);
 
 
-    // 🎯 검색 버튼 클릭 핸들러 (ItemSearchCondition 구성)
     const handleSearch = () => {
         const newCriteria: ItemSearchCondition = {};
         
@@ -92,9 +84,6 @@ const ItemPage = (): React.ReactElement => {
         if (searchCategoryId !== '') newCriteria.categoryId = searchCategoryId as number;
         if (searchMinPrice !== '') newCriteria.minPrice = searchMinPrice as number;
         if (searchMaxPrice !== '') newCriteria.maxPrice = searchMaxPrice as number;
-        if (searchCenterName) newCriteria.centerName = searchCenterName;
-        if (searchZoneCode) newCriteria.zoneCode = searchZoneCode;
-        if (searchBinCode) newCriteria.binCode = searchBinCode;
         if (searchMinQuantity !== '') newCriteria.minQuantity = searchMinQuantity as number;
         
         setCriteria(newCriteria);
@@ -103,6 +92,7 @@ const ItemPage = (): React.ReactElement => {
     
 
     const handleRowClick = (itemId: number) => {
+        // 아이템 상세 페이지로 이동하며, 재고 현황 페이지로 연결
         navigate(`/item/${itemId}/inventory`); 
     };
     
@@ -122,7 +112,6 @@ const ItemPage = (): React.ReactElement => {
         }
     };
     
-    // 폼 저장 로직
     const handleSave = async (data: ItemRegistrationRequest, id?: number) => {
         setLoading(true);
         try {
@@ -175,9 +164,9 @@ const ItemPage = (): React.ReactElement => {
         <div className="p-6 bg-gray-50 h-full flex flex-col">
             <h1 className="text-3xl font-bold text-gray-800 mb-6 border-b pb-2">품목 관리</h1>
             
-            {/* 🎯 검색 영역: ItemSearchCondition 필드 전체 적용 */}
+            {/* 🎯 검색 영역: 로케이션 필드 제거 */}
             <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end"> 
                     
                     {/* 카테고리 ID */}
                     <div>
@@ -223,27 +212,6 @@ const ItemPage = (): React.ReactElement => {
                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" min="0" />
                     </div>
 
-                    {/* 센터 이름 */}
-                    <div>
-                        <label htmlFor="searchCenterName" className="block text-sm font-medium text-gray-700">물류 센터</label>
-                        <input type="text" id="searchCenterName" value={searchCenterName} onChange={(e) => setSearchCenterName(e.target.value)}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="센터 이름" />
-                    </div>
-
-                    {/* 구역 코드 */}
-                    <div>
-                        <label htmlFor="searchZoneCode" className="block text-sm font-medium text-gray-700">구역 코드</label>
-                        <input type="text" id="searchZoneCode" value={searchZoneCode} onChange={(e) => setSearchZoneCode(e.target.value)}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="구역 코드" />
-                    </div>
-
-                    {/* 선반 코드 */}
-                    <div>
-                        <label htmlFor="searchBinCode" className="block text-sm font-medium text-gray-700">선반 코드</label>
-                        <input type="text" id="searchBinCode" value={searchBinCode} onChange={(e) => setSearchBinCode(e.target.value)}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="선반 코드" />
-                    </div>
-
                     {/* 최소 재고 수량 */}
                     <div>
                         <label htmlFor="searchMinQuantity" className="block text-sm font-medium text-gray-700">최소 재고 수량</label>
@@ -251,8 +219,9 @@ const ItemPage = (): React.ReactElement => {
                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" min="0" />
                     </div>
                     
+                    
                     {/* 검색 버튼 */}
-                    <div className='flex space-x-2 md:col-span-1 md:col-start-5'>
+                    <div className='flex space-x-2 md:col-span-1 md:col-start-6'>
                         <button
                             onClick={handleSearch}
                             className="flex items-center justify-center bg-green-600 text-white px-4 py-2 rounded-xl shadow-lg hover:bg-green-700 w-full"
@@ -273,7 +242,7 @@ const ItemPage = (): React.ReactElement => {
             {/* 메인 액션 및 목록 */}
             <div className="flex justify-between items-center mb-4">
                 <button
-                    onClick={openModalForCreate} // 🎯 수정된 함수 호출
+                    onClick={openModalForCreate}
                     className="flex items-center bg-blue-600 text-white px-5 py-2.5 rounded-xl shadow-lg hover:bg-blue-700"
                 >
                     <Plus size={20} className="mr-2" /> 새 품목 등록
@@ -321,7 +290,7 @@ const ItemPage = (): React.ReactElement => {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium" onClick={(e) => e.stopPropagation()}>
                                             <button
-                                                onClick={() => openModalForEdit(item.itemId)} // ID로 수정 모달 열기
+                                                onClick={() => openModalForEdit(item.itemId)}
                                                 className="text-blue-600 hover:text-blue-900 mr-3 p-1 rounded-full hover:bg-blue-100"
                                                 title="수정"
                                             >
@@ -343,7 +312,6 @@ const ItemPage = (): React.ReactElement => {
                 </div>
             )}
             
-            {/* 페이지네이션 */}
             <div className="flex justify-center items-center mt-4 space-x-2">
                 <button onClick={() => handlePageChange(page - 1)} disabled={page === 0 || loading} className="px-3 py-1 text-sm text-gray-600 bg-white border rounded-lg hover:bg-gray-100 disabled:opacity-50">이전</button>
                 <span className="text-sm font-medium text-gray-700">페이지 {page + 1} / {totalPages}</span>
@@ -351,7 +319,6 @@ const ItemPage = (): React.ReactElement => {
             </div>
 
 
-            {/* 등록/수정 모달 */}
             {isModalOpen && (
                 <ItemForm
                     itemToEdit={editingItem}

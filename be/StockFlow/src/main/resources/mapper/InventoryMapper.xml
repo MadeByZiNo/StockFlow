@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.madebyzino.StockFlow.repository.mapper.InventoryMapper">
+
+    <sql id="inventorySearchConditions">
+        <where>
+            <if test="cond.name != null and cond.name != ''">
+                AND i.name LIKE CONCAT('%', #{cond.name}, '%')
+            </if>
+            <if test="cond.sku != null and cond.sku != ''">
+                AND i.sku LIKE CONCAT('%', #{cond.sku}, '%')
+            </if>
+            <if test="cond.minPrice != null">
+                AND i.price &gt;= #{cond.minPrice}
+            </if>
+            <if test="cond.maxPrice != null">
+                AND i.price &lt;= #{cond.maxPrice}
+            </if>
+            <if test="cond.categoryId != null">
+                AND c.id = #{cond.categoryId}
+            </if>
+            <if test="cond.centerName != null and cond.centerName != ''">
+                AND l.center_name = #{cond.centerName}
+            </if>
+            <if test="cond.zoneCode != null and cond.zoneCode != ''">
+                AND l.zone = #{cond.zoneCode}
+            </if>
+            <if test="cond.binCode != null and cond.binCode != ''">
+                AND l.bin_code = #{cond.binCode}
+            </if>
+            <if test="cond.minQuantity != null">
+                AND inv.quantity &gt;= #{cond.minQuantity}
+            </if>
+        </where>
+    </sql>
+
+    <select id="searchInventory" resultType="com.madebyzino.StockFlow.dto.inventory.InventorySummaryResponse">
+        SELECT
+        i.id          AS itemId,
+        i.name        AS itemName,
+        i.sku         AS sku,
+        i.price       AS price,
+        c.name        AS categoryName,
+        inv.id        AS inventoryId,
+        inv.quantity  AS quantity,
+        l.center_name AS centerName,
+        l.zone   AS zoneCode,
+        l.bin_code    AS binCode
+        FROM item i
+        JOIN category c ON i.category_id = c.id
+        JOIN inventory inv ON inv.item_id = i.id
+        JOIN location l ON inv.location_id = l.id
+
+        <include refid="inventorySearchConditions"/>
+
+        ORDER BY i.id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countInventory" resultType="long">
+        SELECT count(*)
+        FROM item i
+        JOIN category c ON i.category_id = c.id
+        JOIN inventory inv ON inv.item_id = i.id
+        JOIN location l ON inv.location_id = l.id
+
+        <include refid="inventorySearchConditions"/>
+    </select>
+
+</mapper>

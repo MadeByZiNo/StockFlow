@@ -14,9 +14,10 @@ import java.time.LocalDateTime;
 public class Transaction extends BaseEntity {
 
     public enum TransactionType {
-        INBOUND,    // 입고
-        OUTBOUND,   // 출고
-        MOVEMENT    // 재고 이동
+        INBOUND,     // 입고
+        OUTBOUND,    // 출고
+        MOVEMENT,    // 재고 이동
+        ADJUSTMENT   // 재고 조정
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,9 +41,8 @@ public class Transaction extends BaseEntity {
     private int quantity; // 변화 수량
 
     @Column(nullable = false)
-    private LocalDateTime transactionDate; // 거래 발생 시점
+    private LocalDateTime transactionDate;
 
-    // User ID는 User 엔티티가 있다고 가정하고 Long 타입만 남겨둠
     @Column(nullable = false)
     private Long userId; // 작업자 ID
 

@@ -4,35 +4,21 @@
 <mapper namespace="com.madebyzino.StockFlow.repository.mapper.ItemMapper">
 
     <sql id="searchConditions">
-        <where>
-            <if test="cond.name != null and cond.name != ''">
-                AND i.name LIKE CONCAT('%', #{cond.name}, '%')
-            </if>
-            <if test="cond.sku != null and cond.sku != ''">
-                AND i.sku LIKE CONCAT('%', #{cond.sku}, '%')
-            </if>
-            <if test="cond.minPrice != null">
-                AND i.price &gt;= #{cond.minPrice}
-            </if>
-            <if test="cond.maxPrice != null">
-                AND i.price &lt;= #{cond.maxPrice}
-            </if>
-            <if test="cond.categoryId != null">
-                AND c.id = #{cond.categoryId}
-            </if>
-            <if test="cond.centerName != null and cond.centerName != ''">
-                AND l.center_name = #{cond.centerName}
-            </if>
-            <if test="cond.zoneCode != null and cond.zoneCode != ''">
-                AND l.zone = #{cond.zoneCode}
-            </if>
-            <if test="cond.binCode != null and cond.binCode != ''">
-                AND l.bin_code = #{cond.binCode}
-            </if>
-            <if test="cond.minQuantity != null">
-                AND inv.quantity &gt;= #{cond.minQuantity}
-            </if>
-        </where>
+        <if test="cond.name != null and cond.name != ''">
+            AND i.name LIKE CONCAT('%', #{cond.name}, '%')
+        </if>
+        <if test="cond.sku != null and cond.sku != ''">
+            AND i.sku LIKE CONCAT('%', #{cond.sku}, '%')
+        </if>
+        <if test="cond.minPrice != null">
+            AND i.price &gt;= #{cond.minPrice}
+        </if>
+        <if test="cond.maxPrice != null">
+            AND i.price &lt;= #{cond.maxPrice}
+        </if>
+        <if test="cond.categoryId != null">
+            AND c.id = #{cond.categoryId}
+        </if>
     </sql>
 
     <select id="searchItems" resultType="com.madebyzino.StockFlow.dto.item.ItemSummaryResponse">
@@ -42,17 +28,18 @@
         i.sku         AS sku,
         i.price       AS price,
         c.name        AS categoryName,
-        inv.id        AS inventoryId,
-        inv.quantity  AS quantity,
-        l.center_name AS centerName,
-        l.zone   AS zoneCode,
-        l.bin_code    AS binCode
-        FROM item i
-        JOIN category c ON i.category_id = c.id
-        JOIN inventory inv ON inv.item_id = i.id
-        JOIN location l ON inv.location_id = l.id
 
+        SUM(inv.quantity)  AS quantity  FROM item i
+        JOIN category c ON i.category_id = c.id
+        LEFT JOIN inventory inv ON inv.item_id = i.id  <where>
         <include refid="searchConditions"/>
+    </where>
+
+        GROUP BY i.id, i.name, i.sku, i.price, c.name
+
+        <if test="cond.minQuantity != null">
+            HAVING SUM(inv.quantity) &gt;= #{cond.minQuantity}
+        </if>
 
         ORDER BY i.id DESC
         LIMIT #{limit} OFFSET #{offset}
@@ -60,12 +47,22 @@
 
     <select id="countItems" resultType="long">
         SELECT count(*)
+        FROM (
+        SELECT i.id
         FROM item i
         JOIN category c ON i.category_id = c.id
-        JOIN inventory inv ON inv.item_id = i.id
-        JOIN location l ON inv.location_id = l.id
+        LEFT JOIN inventory inv ON inv.item_id = i.id
 
-        <include refid="searchConditions"/>
+        <where>
+            <include refid="searchConditions"/>
+        </where>
+
+        GROUP BY i.id
+
+        <if test="cond.minQuantity != null">
+            HAVING SUM(inv.quantity) &gt;= #{cond.minQuantity}
+        </if>
+        ) AS item_count
     </select>
 
 </mapper>

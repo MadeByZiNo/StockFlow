@@ -5,6 +5,8 @@ import CategoryPage from './pages/CategoryPage';
 import LocationPage from './pages/LocationPage';
 import LocationDetailPage from './pages/LocationDetailPage';
 import ItemPage from './pages/ItemPage';
+import InventoryPage from './pages/InventoryPage';
+import TransactionHistoryPage from './pages/TransactionHistoryPage';
 function App() {
   return (
     <BrowserRouter>
@@ -18,6 +20,8 @@ function App() {
           <Route path="/locations" element={<LocationPage />} />
           <Route path="/location/:id" element={<LocationDetailPage />} />
           <Route path="/items" element={<ItemPage />} />
+          <Route path="/inventory" element={<InventoryPage />} />
+          <Route path="/transactions" element={<TransactionHistoryPage />} />
         </Route>
         
         <Route path="*" element={

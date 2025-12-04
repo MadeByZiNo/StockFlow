@@ -72,6 +72,22 @@ export const locationService = {
             console.error(`Error fetching zones for center ${centerName}:`, error);
             return [];
         }
+    },
+
+   getLocationsBinCode: async (criteria: LocationSearchCriteria): Promise<PageResponse<Location>> => {
+        const defaultCriteria = { 
+            size: 1000, 
+            page: 0 
+        }; 
+        const response = await api.get(`/api/locations/bin`, {
+            params: { 
+                ...defaultCriteria,
+                zone: criteria.zone, 
+                centerName: criteria.centerName,
+            },
+        });
+        
+        return response.data;
     }
     
 };

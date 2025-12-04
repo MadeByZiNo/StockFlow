@@ -11,6 +11,7 @@ import com.madebyzino.StockFlow.repository.LocationQueryRepository;
 import com.madebyzino.StockFlow.repository.LocationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -115,5 +116,17 @@ public class LocationService {
     // 7. 특정 센터의 구역(Zone) 목록 조회 (프론트엔드 연동 필터링용)
     public List<String> getZonesByCenterName(String centerName) {
         return locationRepository.findDistinctZonesByCenterName(centerName);
+    }
+
+
+    public Page<LocationResponse> searchLocationsBinCode(String centerName, String zone, Pageable pageable) {
+
+        if (centerName == null || centerName.isEmpty() || zone == null || zone.isEmpty()) {
+            throw new IllegalArgumentException("Center Name과 Zone은 필수 검색 조건입니다.");
+        }
+
+        Page<Location> locations = locationRepository.findByCenterNameAndZone(centerName, zone, pageable);
+
+        return locations.map(LocationResponse::of);
     }
 }

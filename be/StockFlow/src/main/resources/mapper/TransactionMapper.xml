@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.madebyzino.StockFlow.repository.mapper.TransactionMapper">
+
+    <sql id="transactionSearchConditions">
+        <where>
+            <if test="cond.type != null">
+                AND t.type = #{cond.type}
+            </if>
+
+            <if test="cond.startDate != null">
+                AND t.transaction_date &gt;= #{cond.startDate}
+            </if>
+            <if test="cond.endDate != null">
+                AND t.transaction_date &lt;= #{cond.endDate}
+            </if>
+
+            <if test="cond.itemId != null">
+                AND t.item_id = #{cond.itemId}
+            </if>
+            <if test="cond.itemSku != null and cond.itemSku != ''">
+                AND i.sku LIKE CONCAT('%', #{cond.itemSku}, '%')
+            </if>
+
+            <if test="cond.username != null and cond.username != ''">
+                AND u.username LIKE CONCAT('%', #{cond.username}, '%')
+            </if>
+
+            <if test="cond.fromLocationBinCode != null and cond.fromLocationBinCode != ''">
+                AND fl.bin_code = #{cond.fromLocationBinCode}
+            </if>
+            <if test="cond.toLocationBinCode != null and cond.toLocationBinCode != ''">
+                AND tl.bin_code = #{cond.toLocationBinCode}
+            </if>
+        </where>
+    </sql>
+
+    <select id="searchTransactions" resultType="com.madebyzino.StockFlow.dto.transaction.TransactionHistoryResponse">
+        SELECT
+        t.id AS transactionId,
+        t.type,
+        t.quantity,
+        t.transaction_date AS transactionDate,
+        t.user_id AS userId,
+        t.notes,
+
+        i.id AS itemId,
+        i.name AS itemName,
+        i.sku AS itemSku,
+
+        fl.bin_code AS fromBinCode,
+        fl.center_name AS fromCenterName,
+        tl.bin_code AS toBinCode,
+        tl.center_name AS toCenterName,
+
+        u.username AS username  FROM transaction t
+        JOIN item i ON t.item_id = i.id
+        LEFT JOIN location fl ON t.from_location_id = fl.id
+        LEFT JOIN location tl ON t.to_location_id = tl.id
+        LEFT JOIN user u ON t.user_id = u.id  <include refid="transactionSearchConditions"/>
+
+        ORDER BY t.transaction_date DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countTransactions" resultType="long">
+        SELECT count(t.id)
+        FROM transaction t
+        JOIN item i ON t.item_id = i.id
+        LEFT JOIN location fl ON t.from_location_id = fl.id
+        LEFT JOIN location tl ON t.to_location_id = tl.id
+        LEFT JOIN user u ON t.user_id = u.id  <include refid="transactionSearchConditions"/>
+    </select>
+
+</mapper>

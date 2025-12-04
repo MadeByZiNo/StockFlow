@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -75,5 +76,15 @@ public class LocationController {
     public ResponseEntity<List<String>> getZonesByCenterName(@RequestParam String centerName) {
         List<String> zones = locationService.getZonesByCenterName(centerName);
         return ResponseEntity.ok(zones);
+    }
+
+    @GetMapping("/bin")
+    public ResponseEntity<Page<LocationResponse>> getLocationsBinCode(
+            @RequestParam(required = true) String centerName,
+            @RequestParam(required = true) String zone,
+            @PageableDefault(size = 1000, sort = "binCode") Pageable pageable)
+    {
+        Page<LocationResponse> result = locationService.searchLocationsBinCode(centerName, zone, pageable);
+        return ResponseEntity.ok(result);
     }
 }
